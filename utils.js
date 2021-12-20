@@ -16,20 +16,16 @@ module.exports.LeetCodeProblem = function (problemObject) {
 };
 
 module.exports.generateRandomIndex = function (length) {
-  return Math.floor(Math.random() * Math.floor(length));
+  return Math.floor(Math.random() * length);
 };
 
-module.exports.sendProblem = function (
-  message,
-  difficulty = " ",
-  index,
-  problems
-) {
+module.exports.sendProblem = function (message, difficulty = " ", problems) {
   if (difficulty !== " ") {
     problems = problems.filter((problem) => {
-      problem.difficulty.toLowerCase() === diff;
+      return problem.difficulty.toLowerCase() === difficulty;
     });
   }
+  const index = this.generateRandomIndex(problems.length);
   const problem = problems[index];
   const problemURL = "https://leetcode.com/problems/" + problem.titleSlug + "/";
   const msg = new MessageEmbed()
