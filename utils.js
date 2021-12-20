@@ -14,7 +14,7 @@ module.exports.LeetCodeProblem = function (problemObject) {
 };
 
 module.exports.generateRandomIndex = function (length) {
-  return Math.floor(Math.random() * Math.floor(max));
+  return Math.floor(Math.random() * Math.floor(length));
 };
 
 module.exports.sendProblem = function (
