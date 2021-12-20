@@ -1,7 +1,7 @@
 require("dotenv").config();
 
 const { default: axios } = require("axios");
-const { Client, Intents, MessageEmbed } = require("discord.js");
+const { Client } = require("discord.js");
 const { DISCORD_BOT_TOKEN } = process.env;
 const variables = require("./config");
 const prefix = "!problem";
