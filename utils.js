@@ -1,3 +1,5 @@
+const { MessageEmbed } = require("discord.js");
+
 //Creating Problem Constructor
 module.exports.LeetCodeProblem = function (problemObject) {
   this.id = problemObject.stat.question_id;
@@ -28,7 +30,7 @@ module.exports.sendProblem = function (
       problem.difficulty.toLowerCase() === diff;
     });
   }
-  const problem = problem[index];
+  const problem = problems[index];
   const problemURL = "https://leetcode.com/problems/" + problem.titleSlug + "/";
   const msg = new MessageEmbed()
     .setTitle(problem.title)
@@ -40,5 +42,5 @@ module.exports.sendProblem = function (
       } problem.`
     )
     .setURL(problemURL);
-  message.channel.send(msg);
+  message.channel.send({ embeds: [msg] });
 };

@@ -1,7 +1,7 @@
 require("dotenv").config();
 
 const { default: axios } = require("axios");
-const { Client, Intents } = require("discord.js");
+const { Client, Intents, MessageEmbed } = require("discord.js");
 const { DISCORD_BOT_TOKEN } = process.env;
 const variables = require("./config");
 const prefix = "!problem";
@@ -11,7 +11,9 @@ const problems = [];
 let totalProblemGenerated = 0;
 
 // CLIENT CREATION
-const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+const client = new Client({
+  intents: ["GUILDS", "GUILD_MESSAGES", "DIRECT_MESSAGES"],
+});
 
 //IMPORTING PROBLEMS
 axios.get(leetCodeApiURL).then((response) => {
@@ -28,7 +30,32 @@ client.on("ready", () => {
   console.log("Bot is Online and Responsive");
 });
 
-client.on("message", (message) => {});
+client.on("messageCreate", (message) => {
+  if (!message.content.startsWith(prefix) || message.author.bot) return;
+  const args = message.content.slice(prefix.length).trim().split(" ");
+  const command = args.shift().toLowerCase();
+  let difficulty;
+  if (typeof args[0] != "undefined") {
+    const temp = args[0].toLowerCase();
+    if (["easy", "medium", "hard"].indexOf(temp) >= 0) {
+      difficulty = temp;
+    }
+  }
+  if (command === "info") {
+    message.channel.send(
+      `Leetcode currently has a total of ${totalProblemGenerated} problems. We can generate one for yeh 😉\n\n\n` +
+        "Type ```!problem``` to generate one!"
+    );
+  } else if (command === "help") {
+    message.channel.send(
+      "```Usage:\n\n\t!problem (without args) - gives you a random problem of any difficulty either paid/free." +
+        "\n\nAdding difficulty modifiers:\n\n\t!problem <easy | medium | hard> - lets you pick a random problem of chosen difficulty.```"
+    );
+  } else {
+    const randomProblemIndex = utils.generateRandomIndex(totalProblemGenerated);
+    utils.sendProblem(message, difficulty, randomProblemIndex, problems);
+  }
+});
 
 // GUILD CREATION
 client.on("guildCreate", (guild) => {
