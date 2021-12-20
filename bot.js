@@ -22,7 +22,6 @@ axios.get(leetCodeApiURL).then((response) => {
     problems.push(newProblem);
   });
   totalProblemGenerated = problems.length;
-  console.log(problems);
 });
 
 // BOT GETS READY
