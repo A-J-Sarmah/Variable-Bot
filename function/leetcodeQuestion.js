@@ -1,39 +1,65 @@
 const createEmbed = require("../helper/createEmbed");
 const axios = require("axios");
-const { Brand_Color_Code } = require("../config");
 const leetCodeApiURL = "https://leetcode.com/api/problems/all";
 
-//IMPORTING PROBLEMS
-// axios.get(leetCodeApiURL).then((response) => {
-//   response.data.stat_status_pairs.forEach((problem) => {
-//     const newProblem = new utils.LeetCodeProblem(problem); //creates new problems with the help of the constructor imported from utils
-//     problems.push(newProblem);
-//   });
-//   totalProblemGenerated = problems.length;
-// });
+let IndividualProblem = class {
+  constructor(problemObject) {
+    this.id = problemObject.stat.question_id;
+    this.title = problemObject.stat.question__title;
+    this.difficulty =
+      problemObject.difficulty.level === 3
+        ? "Hard"
+        : problemObject.difficulty.level === 2
+        ? "Medium"
+        : "Easy";
+    this.access = problemObject.paid_only ? "Paid" : "Free";
+    this.titleSlug = problemObject.stat.question__title_slug;
+  }
+};
 
-// client.on("messageCreate", (message) => {
-//   if (!message.content.startsWith(prefix) || message.author.bot) return;
-//   const args = message.content.slice(prefix.length).trim().split(" ");
-//   const command = args.shift().toLowerCase();
-//   let difficulty;
-//   if (command === "easy" || command === "medium" || command === "hard") {
-//     difficulty = command;
-//     utils.sendProblem(message, difficulty, problems);
-//   } else if (command === "info") {
-//     message.channel.send(
-//       `Leetcode currently has a total of ${totalProblemGenerated} problems. We can generate one for yeh 😉\n\n\n` +
-//         "Type ```!problem``` to generate one!"
-//     );
-//   } else if (command === "help") {
-//     message.channel.send(
-//       "```Usage:\n\n\t!problem (without args) - gives you a random problem of any difficulty either paid/free." +
-//         "\n\nAdding difficulty modifiers:\n\n\t!problem <easy | medium | hard> - lets you pick a random problem of chosen difficulty.```"
-//     );
-//   } else {
-//     utils.sendProblem(message, difficulty, problems);
-//   }
-// });
+const randomNumberGenerator = (length) => {
+  return Math.floor(Math.random() * length);
+};
+
+const sendProblem = (message, problems, difficulty = null) => {
+  if (difficulty) {
+    problems = problems.filter((problem) => {
+      return problem.difficulty.toLowerCase() === difficulty;
+    });
+  }
+  const index = randomNumberGenerator(problems.length);
+  const reqProblem = problems[index];
+  const problemURL =
+    "https://leetcode.com/problems/" + reqProblem.titleSlug + "/";
+
+  const msgEmbed = createEmbed({
+    title: "DSA Problem | LeetCode",
+    thumbnail: "https://leetcode.com/static/images/LeetCode_logo_rvs.png",
+    URL: problemURL,
+    description: "Click on the Link to view the Problem",
+    fields: [
+      {
+        name: "Problem Name",
+        value: reqProblem.title,
+        inline: false,
+      },
+      {
+        name: "Difficulty",
+        value: reqProblem.difficulty,
+        inline: true,
+      },
+      {
+        name: "Access",
+        value: reqProblem.access,
+        inline: true,
+      },
+    ],
+  });
+
+  message.channel.send({ embeds: [msgEmbed] }).then((message) => {
+    message.react("<:variable:923241560232054804>");
+  });
+};
 
 const leetcodeProblem = async (message, args) => {
   let problems = [];
@@ -44,22 +70,43 @@ const leetcodeProblem = async (message, args) => {
     // Fetch Problems
     let response = await axios.get(leetCodeApiURL);
 
-    if (command === "easy" || command === "medium" || command === "hard") {
-    } else if (command === "info") {
+    if (command === "info") {
+      // Total
+      totalProblemGenerated = response.data.num_total;
       const embed = createEmbed({
-        color: Brand_Color_Code,
         title: "LeetCode Info",
         URL: "https://leetcode.com/",
+        thumbnail: "https://leetcode.com/static/images/LeetCode_logo_rvs.png",
+        description:
+          "Use `!var problem` to get a random DSA Question.\nCustomize Problem level with `!var problem <easy | medium | hard>`",
+        fields: [
+          {
+            name: "Total Number of Problems",
+            value: `${totalProblemGenerated}`,
+            inline: true,
+          },
+          {
+            name: "Platform",
+            value: "www.leetcode.com",
+            inline: true,
+          },
+        ],
       });
       message.channel.send({ embeds: [embed] });
     } else {
-      
+      // Managing Problems
+      response.data.stat_status_pairs.forEach((problem) => {
+        const newProblem = new IndividualProblem(problem);
+        problems.push(newProblem);
+      });
+      let difficulty;
+      if (command === "easy" || command === "medium" || command === "hard") {
+        difficulty = command;
+        sendProblem(message, problems, difficulty);
+      } else {
+        sendProblem(message, problems);
+      }
     }
-    // Total
-    totalProblemGenerated = response.data.num_total;
-
-    // Managing Problems
-    console.log(response.data);
   } catch (error) {
     console.log(error);
   }

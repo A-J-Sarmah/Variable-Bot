@@ -1,12 +1,13 @@
 const { MessageEmbed } = require("discord.js");
+const { BRAND_COLOR_CODE, BOT_IMAGE } = require("../config");
 
 const CreateEmbed = (config) => {
   const embed = new MessageEmbed()
-    .setColor(config.color)
+    .setColor(config.color || BRAND_COLOR_CODE)
     .setTitle(config.title)
     .setURL(config.URL)
     .setTimestamp(Date.now())
-    .setFooter("Variable Bot", "");
+    .setFooter("Variable Community", BOT_IMAGE);
 
   if (config.URL) {
     embed.setURL(config.URL);

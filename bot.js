@@ -2,7 +2,7 @@ require("dotenv").config();
 
 const { Client } = require("discord.js");
 const { DISCORD_BOT_TOKEN } = process.env;
-const { prefix } = require("./config");
+const { PREFIX } = require("./config");
 
 // TASKs IMPORT
 const leetcodeProblem = require("./function/leetcodeQuestion");
@@ -26,13 +26,13 @@ client.on("guildCreate", (guild) => {
 });
 
 client.on("messageCreate", (message) => {
-  // Checking for Prefix
-  if (!message.content.startsWith(prefix) || message.author.bot) return;
+  // Checking for PREFIX
+  if (!message.content.startsWith(PREFIX) || message.author.bot) return;
 
   // Processing Message
   const args = message.content
     .toLowerCase()
-    .slice(prefix.length + 1)
+    .slice(PREFIX.length + 1)
     .trim()
     .split(" ");
 
