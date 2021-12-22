@@ -21,12 +21,21 @@ const randomNumberGenerator = (length) => {
   return Math.floor(Math.random() * length);
 };
 
-const sendProblem = (message, problems, difficulty = null) => {
-  if (difficulty) {
-    problems = problems.filter((problem) => {
-      return problem.difficulty.toLowerCase() === difficulty;
-    });
+const sendProblem = (message, problems, params, type = null) => {
+  if (params === "difficulty") {
+    if (type) {
+      problems = problems.filter((problem) => {
+        return problem.difficulty.toLowerCase() === type;
+      });
+    }
+  } else if (params === "access") {
+    if (type) {
+      problems = problems.filter((problem) => {
+        return problem.access.toLowerCase() === type;
+      });
+    }
   }
+
   const index = randomNumberGenerator(problems.length);
   const reqProblem = problems[index];
   const problemURL =
@@ -78,7 +87,7 @@ const leetcodeProblem = async (message, args) => {
         URL: "https://leetcode.com/",
         thumbnail: "https://leetcode.com/static/images/LeetCode_logo_rvs.png",
         description:
-          "Use `!var problem` to get a random DSA Question.\nCustomize Problem level with `!var problem <easy | medium | hard>`",
+          "Use `!var problem` to get a random DSA Question.\nCustomize Problem level with `!var problem <easy | medium | hard | free | paid>`",
         fields: [
           {
             name: "Total Number of Problems",
@@ -99,12 +108,15 @@ const leetcodeProblem = async (message, args) => {
         const newProblem = new IndividualProblem(problem);
         problems.push(newProblem);
       });
-      let difficulty;
+      let type;
       if (command === "easy" || command === "medium" || command === "hard") {
-        difficulty = command;
-        sendProblem(message, problems, difficulty);
+        type = command;
+        sendProblem(message, problems, "difficulty", type);
+      } else if (command === "free" || command === "paid") {
+        type = command;
+        sendProblem(message, problems, "access", type);
       } else {
-        sendProblem(message, problems);
+        sendProblem(message, problems, null);
       }
     }
   } catch (error) {
