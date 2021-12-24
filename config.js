@@ -5,6 +5,7 @@ const variables = {
   BRAND_COLOR_CODE: "#ffb923",
   PREFIX: "!var",
   CRON_QUERY: "*/2 * * * * *",
+  BOT_COMMANDS: "916938129913548850",
 };
 
 module.exports = variables;
