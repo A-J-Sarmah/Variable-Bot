@@ -2,10 +2,11 @@ require("dotenv").config();
 
 const { Client } = require("discord.js");
 const { DISCORD_BOT_TOKEN } = process.env;
-const { PREFIX } = require("./config");
+const { PREFIX, CRON_QUERY } = require("./config");
 
 // TASKs IMPORT
 const leetcodeProblem = require("./function/leetcodeQuestion");
+const automatedMessage = require("./function/AutomaticMessage");
 
 // CLIENT CREATION
 const client = new Client({
@@ -15,6 +16,7 @@ const client = new Client({
 // BOT GETS READY
 client.on("ready", () => {
   console.log("Bot is Online and Responsive");
+  automatedMessage(CRON_QUERY, client);
 });
 
 // GUILD CREATION

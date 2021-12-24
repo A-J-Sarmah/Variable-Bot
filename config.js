@@ -4,6 +4,7 @@ const variables = {
     "https://github.com/Variable-Community/Variable-Bot/blob/main/resources/darkLogo.png?raw=true",
   BRAND_COLOR_CODE: "#ffb923",
   PREFIX: "!var",
+  CRON_QUERY: "*/2 * * * * *",
 };
 
 module.exports = variables;
