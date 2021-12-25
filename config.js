@@ -6,6 +6,7 @@ const variables = {
   PREFIX: "!var",
   CRON_QUERY: "*/2 * * * * *",
   BOT_COMMANDS: "916938129913548850",
+  MESSAGE: "Hello World",
 };
 
 module.exports = variables;
